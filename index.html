@@ -555,6 +555,41 @@
       }
     }
 
+
+    /* Flow tab states */
+.flow-tab {
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight:700;
+  cursor:pointer;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  color: var(--text-muted);
+  transition: all 220ms ease;
+}
+
+/* neutral / secondary */
+.flow-tab.secondary {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid rgba(255,255,255,0.06);
+  opacity: 0.95;
+}
+
+/* active — green (visible for both User and Idora when active) */
+.flow-tab.active {
+  background: linear-gradient(135deg, var(--green-deep), var(--green-light));
+  color: #fff;
+  box-shadow: 0 10px 28px rgba(11,107,58,0.25);
+  border-color: rgba(255,255,255,0.06);
+}
+
+/* focus style for accessibility */
+.flow-tab:focus {
+  outline: 3px solid rgba(104,210,148,0.12);
+  outline-offset: 3px;
+}
+
     
 
   </style>
@@ -690,7 +725,7 @@
           <div style="display:flex;gap:10px;align-items:center;margin:18px 0;">
             <button class="flow-tab btn" data-mode="user" aria-pressed="true">User (Ilova)</button>
             <button class="flow-tab btn secondary" data-mode="authority" aria-pressed="false"
-              style="background:transparent;color:var(--text-muted);border:1px solid rgba(255,255,255,0.06)">Idora
+              style="color:var(--text-muted);border:1px solid rgba(255,255,255,0.06)">Idora
               (Dashboard)</button>
             <div style="margin-left:auto;color:var(--text-muted);font-size:0.95rem">Slide orqali jarayonni ko'ring</div>
           </div>
@@ -1205,123 +1240,139 @@
       });
     });
 
-    (function () {
-      const slidesEl = document.querySelector('#solution .slides');
-      const slides = Array.from(slidesEl.querySelectorAll('.slide'));
-      const tabs = document.querySelectorAll('.flow-tab');
-      const prevBtn = document.getElementById('flow-prev');
-      const nextBtn = document.getElementById('flow-next');
-      const dotsWrap = document.getElementById('flow-dots');
-      const stepBadge = document.getElementById('step-badge');
+(function () {
+  const slidesEl = document.querySelector('#solution .slides');
+  const slides = Array.from(slidesEl.querySelectorAll('.slide'));
+  const tabs = Array.from(document.querySelectorAll('.flow-tab'));
+  const prevBtn = document.getElementById('flow-prev');
+  const nextBtn = document.getElementById('flow-next');
+  const dotsWrap = document.getElementById('flow-dots');
+  const stepBadge = document.getElementById('step-badge');
 
-      let mode = 'user'; // 'user' or 'authority'
-      // build visibleSlides array for current mode
-      function getModeSlides(m) {
-        return slides.filter(s => s.dataset.mode === m);
+  // default mode
+  let mode = 'user';
+  let index = 0;
+
+  function getModeSlides(m) {
+    return slides.filter(s => s.dataset.mode === m);
+  }
+
+  function renderDots() {
+    const modeSlides = getModeSlides(mode);
+    dotsWrap.innerHTML = '';
+    modeSlides.forEach((s, i) => {
+      const d = document.createElement('div');
+      d.className = 'flow-dot' + (i === index ? ' active' : '');
+      d.dataset.i = i;
+      d.addEventListener('click', () => goTo(i));
+      dotsWrap.appendChild(d);
+    });
+  }
+
+  function updateStepBadge() {
+    stepBadge.textContent = (index + 1) + '-qadam';
+  }
+
+  // move to i-th slide of current mode
+  function goTo(i) {
+    const modeSlides = getModeSlides(mode);
+    index = Math.max(0, Math.min(i, modeSlides.length - 1));
+    // find absolute position in all slides
+    let absIndex = 0, found = -1;
+    for (let k = 0; k < slides.length; k++) {
+      if (slides[k].dataset.mode === mode) {
+        if (slides[k] === modeSlides[index]) { found = k; break; }
       }
+    }
+    if (found === -1) found = 0;
+    slidesEl.style.transform = `translateX(-${found * 100}%)`;
+    renderDots();
+    updateStepBadge();
+  }
 
-      // state
-      let modeSlides = getModeSlides(mode);
-      let index = 0;
+  function next() {
+    const len = getModeSlides(mode).length;
+    goTo((index + 1) % len);
+  }
+  function prev() {
+    const len = getModeSlides(mode).length;
+    goTo((index - 1 + len) % len);
+  }
 
-      // render dots
-      function renderDots() {
-        dotsWrap.innerHTML = '';
-        modeSlides.forEach((s, i) => {
-          const d = document.createElement('div');
-          d.className = 'flow-dot' + (i === index ? ' active' : '');
-          d.dataset.i = i;
-          d.addEventListener('click', () => { goTo(i); });
-          dotsWrap.appendChild(d);
-        });
+  // TAB SWITCH: make sure active class toggles correctly and mode changes
+  function setActiveTab(targetMode) {
+    tabs.forEach(t => {
+      const m = t.dataset.mode;
+      if (m === targetMode) {
+        t.classList.add('active');
+        t.classList.remove('secondary');
+        t.setAttribute('aria-pressed', 'true');
+      } else {
+        t.classList.remove('active');
+        t.classList.add('secondary');
+        t.setAttribute('aria-pressed', 'false');
       }
+    });
+  }
 
-      function updateStepBadge() {
-        stepBadge.textContent = (index + 1) + '-qadam';
-      }
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      const clickedMode = t.dataset.mode;
+      if (clickedMode === mode) return; // already active
+      mode = clickedMode;
+      index = 0;
+      setActiveTab(mode);
 
-      function goTo(i) {
-        index = i;
-        // compute offset — find absolute position of the i-th slide of current mode among all slides
-        const allSlides = slidesEl.querySelectorAll('.slide');
-        let offsetIndex = 0;
-        for (let k = 0; k < allSlides.length; k++) {
-          const s = allSlides[k];
-          if (s.dataset.mode === mode) {
-            if (offsetIndex === i) {
-              // translate to -k * 100%
-              slidesEl.style.transform = `translateX(-${k * 100}%)`;
-              break;
-            }
-            offsetIndex++;
-          }
+      // find first slide of the selected mode and move there
+      const allSlides = slidesEl.querySelectorAll('.slide');
+      for (let k = 0; k < allSlides.length; k++) {
+        if (allSlides[k].dataset.mode === mode) {
+          slidesEl.style.transform = `translateX(-${k * 100}%)`;
+          break;
         }
-        renderDots(); updateStepBadge();
       }
+      renderDots();
+      updateStepBadge();
+    });
+  });
 
-      function next() {
-        const len = modeSlides.length;
-        goTo((index + 1) % len);
-      }
-      function prev() {
-        const len = modeSlides.length;
-        goTo((index - 1 + len) % len);
-      }
+  // controls
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
 
-      // tab switching
-      tabs.forEach(t => {
-        t.addEventListener('click', () => {
-          tabs.forEach(x => { x.classList.remove('active'); x.classList.add('secondary'); x.setAttribute('aria-pressed', 'false'); });
-          t.classList.add('active'); t.classList.remove('secondary'); t.setAttribute('aria-pressed', 'true');
-          mode = t.dataset.mode;
-          modeSlides = getModeSlides(mode);
-          index = 0;
-          // move slidesEl to first slide of the selected mode
-          const allSlides = slidesEl.querySelectorAll('.slide');
-          for (let k = 0; k < allSlides.length; k++) {
-            if (allSlides[k].dataset.mode === mode) { slidesEl.style.transform = `translateX(-${k * 100}%)`; break; }
-          }
-          renderDots(); updateStepBadge();
-        });
-      });
+  // keyboard navigation
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') next();
+    if (e.key === 'ArrowLeft') prev();
+  });
 
-      // prev/next
-      nextBtn.addEventListener('click', next);
-      prevBtn.addEventListener('click', prev);
+  // basic swipe
+  (function () {
+    let startX = 0, currentX = 0, dragging = false;
+    slidesEl.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; dragging = true; });
+    slidesEl.addEventListener('touchmove', (e) => { if (!dragging) return; currentX = e.touches[0].clientX; });
+    slidesEl.addEventListener('touchend', () => {
+      if (!dragging) return; dragging = false;
+      const diff = startX - currentX;
+      if (Math.abs(diff) > 40) { if (diff > 0) next(); else prev(); }
+      startX = currentX = 0;
+    });
+  })();
 
-      // keyboard
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') next();
-        if (e.key === 'ArrowLeft') prev();
-      });
+  // init UI: set active tab and position slides to first of default mode
+  (function init() {
+    setActiveTab(mode);
+    // position to first slide of mode
+    const allSlides = slidesEl.querySelectorAll('.slide');
+    for (let k = 0; k < allSlides.length; k++) {
+      if (allSlides[k].dataset.mode === mode) { slidesEl.style.transform = `translateX(-${k * 100}%)`; break; }
+    }
+    renderDots();
+    updateStepBadge();
+  })();
 
-      // touch swipe
-      (function () {
-        let startX = 0, currentX = 0, dragging = false;
-        slidesEl.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; dragging = true; });
-        slidesEl.addEventListener('touchmove', (e) => { if (!dragging) return; currentX = e.touches[0].clientX; });
-        slidesEl.addEventListener('touchend', () => {
-          if (!dragging) return; dragging = false;
-          const diff = startX - currentX;
-          if (Math.abs(diff) > 40) {
-            if (diff > 0) next(); else prev();
-          }
-          startX = currentX = 0;
-        });
-      })();
+})();
 
-      // init: position to first slide of mode
-      (function init() {
-        // find first slide index for current mode
-        const allSlides = slidesEl.querySelectorAll('.slide');
-        for (let k = 0; k < allSlides.length; k++) {
-          if (allSlides[k].dataset.mode === mode) { slidesEl.style.transform = `translateX(-${k * 100}%)`; break; }
-        }
-        modeSlides = getModeSlides(mode);
-        renderDots(); updateStepBadge();
-      })();
-
-    })();
     // Elements
     const splash = document.getElementById('splash');
     const loader = document.getElementById('loader');
