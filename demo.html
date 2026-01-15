@@ -483,14 +483,30 @@
       text-align: center;
     }
 
-    /* Mobil layoutga xos o‘zgartirishlar */
+    /* Video styling - contain for mobile YouTube format */
+    video {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      background: #000;
+      border-radius: 12px;
+      display: block;
+    }
+
+    .demo-video-wrapper video {
+      max-width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+    }
+
+    /* Mobil layoutga xos o'zgartirishlar */
     @media (max-width: 1024px) {
-      /* Scroll animatsiyani butunlay o‘chirib qo‘yish */
+      /* Scroll animatsiyani butunlay o'chirib qo'yish */
       .mouse-scroll {
         display: none;
       }
 
-      /* CTA tugmalarni mobile’da ustma-ust markazda chiqarish */
+      /* CTA tugmalarni mobile'da ustma-ust markazda chiqarish */
       .flex.center {
         flex-direction: column;
         align-items: center;
@@ -500,6 +516,15 @@
         width: 100%;
         max-width: 260px;
         text-align: center;
+      }
+
+      /* Mobile video optimization */
+      .demo-video-wrapper video {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        object-fit: contain;
+        background: #000;
       }
     }
 
@@ -535,7 +560,7 @@
               <div class="chip">🎥 Demo Video</div>
               <video controls>
                 <!-- SHU YERGA O'Z VIDEO MANZILINGIZNI QO'YASIZ -->
-                masalan: <source src="demo.mp4" type="video/mp4" />
+                masalan: <source src="video_2025-12-12_18-32-42.mp4" type="video/mp4" />
                 Sizning brauzeringiz video tagini qo‘llab-quvvatlamaydi.
               </video>
             </div>
