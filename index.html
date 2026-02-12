@@ -4,7 +4,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>EcoReport — AI500 Demo</title>
+  <title>EcoReport — UzTech Hackaton Stage 1 Demo</title>
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('ecoReportSplashSeen') === '1') {
+          document.documentElement.classList.add('no-splash');
+        }
+      } catch (e) {
+        // Ignore storage access issues
+      }
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -86,6 +97,44 @@
       opacity: 0;
       pointer-events: none;
       display: none
+    }
+
+    /* Cursor-following blurred orbs */
+    .cursor-orb {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 420px;
+      height: 420px;
+      border-radius: 999px;
+      filter: blur(60px);
+      opacity: 0.45;
+      pointer-events: none;
+      z-index: 0;
+      transform: translate3d(0, 0, 0);
+      transition: opacity 300ms ease;
+    }
+
+    .cursor-orb.orb-a {
+      background: radial-gradient(circle, rgba(104, 210, 148, 0.9), rgba(104, 210, 148, 0));
+    }
+
+    .cursor-orb.orb-b {
+      width: 520px;
+      height: 520px;
+      opacity: 0.35;
+      background: radial-gradient(circle, rgba(55, 161, 106, 0.8), rgba(55, 161, 106, 0));
+    }
+
+    html.no-splash #splash,
+    html.no-splash #loader {
+      display: none !important;
+    }
+
+    html.no-splash #app.hidden {
+      display: block !important;
+      opacity: 1;
+      pointer-events: auto;
     }
 
     /* Buttons */
@@ -179,15 +228,16 @@
       top: 24px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(5, 20, 15, 0.85);
+      background: rgba(8, 24, 19, 0.6);
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       padding: 8px;
       border-radius: 100px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       z-index: 1000;
       display: flex;
       gap: 4px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
       max-width: 90vw;
     }
 
@@ -264,13 +314,15 @@
     }
 
     .card {
-      background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(10, 30, 24, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       padding: 40px 32px;
       border-radius: 24px;
       transition: all 0.4s ease;
       position: relative;
       overflow: hidden;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
 
     .card::before {
@@ -308,8 +360,10 @@
 
     /* Team */
     .team-card {
+      height: auto;
       text-align: center;
       padding: 40px 20px;
+      padding-bottom: 20px;
     }
 
     .team-avatar {
@@ -614,6 +668,9 @@
 </head>
 
 <body>
+
+  <div class="cursor-orb orb-a" aria-hidden="true"></div>
+  <div class="cursor-orb orb-b" aria-hidden="true"></div>
 
   <!-- Splash Screen -->
   <div id="splash">
@@ -1062,7 +1119,7 @@
           </div>
 
           <!-- 2: MVP + AI + Routing (merged) -->
-          <div class="roadmap-item">
+          <div class="roadmap-item active">
             <div>
               <h3>2. MVP + AI Integratsiyasi + Avtomatik Yo'naltirish</h3>
               <p>
@@ -1116,41 +1173,34 @@
       <section id="team">
         <h2>Bizning Jamoa</h2>
 
-        <div class="card-grid">
+        <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:28px;">
 
           <div class="card team-card">
             <div class="team-avatar">A.G</div>
             <h3>Asliddin GOYIBNAZAROV</h3>
-            <p style="color:var(--green-neon)">Product Manager / Frontend Developer</p>
-            <p class="sub">React, Flutter, UX & Product Ownership</p>
+            <p style="color:var(--green-neon)">Product Manager</p>
+            <p class="sub">Product Manager & Product Ownership</p>
           </div>
 
           <div class="card team-card">
-            <div class="team-avatar">J.J</div>
-            <h3>Javohir JUMAYEV</h3>
-            <p style="color:var(--green-neon)">AI Specialist</p>
-            <p class="sub">YOLOv8, PyTorch, Computer Vision</p>
+            <div class="team-avatar">A.A</div>
+            <h3>Abdumannop ABDUMURATOV</h3>
+            <p style="color:var(--green-neon)">Frontend Developer</p>
+            <p class="sub">React, Flutter, UI & UX</p>
           </div>
 
           <div class="card team-card">
-            <div class="team-avatar">S.I</div>
-            <h3>Samandar ISROILOV</h3>
-            <p style="color:var(--green-neon)">Backend Developer</p>
-            <p class="sub">FastAPI, PostgreSQL, Docker</p>
+            <div class="team-avatar">I.A</div>
+            <h3>Intizoroy ABDURAXIMOVA</h3>
+            <p style="color:var(--green-neon)">Designer</p>
+            <p class="sub">Figma, UI & UX</p>
           </div>
 
           <div class="card team-card">
-            <div class="team-avatar">Q.U</div>
-            <h3>Quvonchbek UMURZOQOV</h3>
-            <p style="color:var(--green-neon)">Backend Developer</p>
-            <p class="sub">Node.js, Redis, CI/CD</p>
-          </div>
-
-          <div class="card team-card">
-            <div class="team-avatar">B.P</div>
-            <h3>Baxtiyor PARDABOYEV</h3>
-            <p style="color:var(--green-neon)">AI Specialist</p>
-            <p class="sub">TensorFlow, Model Deployment, Data Pipelines</p>
+            <div class="team-avatar">Sh.J</div>
+            <h3>Shaxlo JO'RAYEVA</h3>
+            <p style="color:var(--green-neon)">Data Analyst</p>
+            <p class="sub">Python, SQL, Data Visualization</p>
           </div>
 
         </div>
@@ -1164,13 +1214,13 @@
           Savollar, hamkorlik yoki loyiha bo'yicha murojaat uchun jamoa a’zolari bilan bog'lanishingiz mumkin.
         </p>
 
-        <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;">
+        <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:28px;">
 
           <!-- Asliddin -->
           <div class="card" style="padding:26px; display:flex; justify-content:space-between; align-items:flex-start; gap:18px;">
             <div style="flex:1;">
               <h3 style="margin-bottom:6px;">Asliddin GOYIBNAZAROV</h3>
-              <p style="color:var(--green-neon);font-weight:600;margin-bottom:6px;">Product Manager / Frontend</p>
+              <p style="color:var(--green-neon);font-weight:600;margin-bottom:6px;">Product Manager & Product Ownership</p>
               <p class="sub" style="color:var(--text-muted);font-size:0.9rem;">+998 94 137 55 10</p>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;">
@@ -1179,53 +1229,42 @@
             </div>
           </div>
 
-          <!-- Javohir -->
+          <!-- Abdumannop -->
           <div class="card" style="padding:26px; display:flex; justify-content:space-between; align-items:flex-start; gap:18px;">
             <div style="flex:1;">
-              <h3 style="margin-bottom:6px;">Javohir JUMAYEV</h3>
-              <p style="color:var(--green-neon);font-weight:600;margin-bottom:6px;">AI Specialist</p>
-              <p class="sub" style="color:var(--text-muted);font-size:0.9rem;">+998 94 519 04 03</p>
+              <h3 style="margin-bottom:6px;">Abdumannop Abdumuratov</h3>
+              <p style="color:var(--green-neon);font-weight:600;margin-bottom:6px;">Frontend Developer</p>
+              <p class="sub" style="color:var(--text-muted);font-size:0.9rem;">+998 91 234 00 24</p>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;">
-              <a href="https://t.me/primel_42" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">Telegram</a>
+              <a href="https://www.linkedin.com/in/abdumannop-abdumuratov-374248385/" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">LinkedIn</a>
+              <a href="https://t.me/abdumuratov_off" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">Telegram</a>
             </div>
           </div>
 
-          <!-- Samandar -->
+          <!-- Intizoroy -->
           <div class="card" style="padding:26px; display:flex; justify-content:space-between; align-items:flex-start; gap:18px;">
             <div style="flex:1;">
-              <h3 style="margin-bottom:6px;">Samandar ISROILOV</h3>
-              <p style="color:var(--green-neon);font-weight:600;margin-bottom:6px;">Backend Developer</p>
-              <p class="sub" style="color:var(--text-muted);font-size:0.9rem;">+998 90 024 71 51</p>
+              <h3 style="margin-bottom:6px;">Intizoroy ABDURAXIMOVA</h3>
+              <p style="color:var(--green-neon);font-weight:600;margin-bottom:6px;">Designer</p>
+              <p class="sub" style="color:var(--text-muted);font-size:0.9rem;">+998 97 174 91 11</p>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;">
-              <a href="https://t.me/IsroilovSamandar" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">Telegram</a>
+              <a href="https://www.linkedin.com/in/intizoroy-abduraximova-0133b533b?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">LinkedIn</a>
+              <a href="https://t.me/i_best07" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">Telegram</a>
             </div>
           </div>
 
-          <!-- Quvonchbek -->
+          <!-- Shaxlo -->
           <div class="card" style="padding:26px; display:flex; justify-content:space-between; align-items:flex-start; gap:18px;">
             <div style="flex:1;">
-              <h3 style="margin-bottom:6px;">Quvonchbek UMURZOQOV</h3>
-              <p style="color:var(--green-neon);font-weight:600;margin-bottom:6px;">Backend Developer</p>
-              <p class="sub" style="color:var(--text-muted);font-size:0.9rem;">+998 90 461 31 36</p>
+              <h3 style="margin-bottom:6px;">Shaxlo JO'RAYEVA</h3>
+              <p style="color:var(--green-neon);font-weight:600;margin-bottom:6px;">Data Analyst</p>
+              <p class="sub" style="color:var(--text-muted);font-size:0.9rem;">+998 90 927 92 26</p>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;">
-              <a href="https://www.linkedin.com/in/quvonchbek/" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">LinkedIn</a>
-              <a href="https://t.me/quvonchbek_umt" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">Telegram</a>
-            </div>
-          </div>
-
-          <!-- Baxtiyor -->
-          <div class="card" style="padding:26px; display:flex; justify-content:space-between; align-items:flex-start; gap:18px;">
-            <div style="flex:1;">
-              <h3 style="margin-bottom:6px;">Baxtiyor PARDABOYEV</h3>
-              <p style="color:var(--green-neon);font-weight:600;margin-bottom:6px;">AI Specialist</p>
-              <p class="sub" style="color:var(--text-muted);font-size:0.9rem;">+998 94 188 00 98</p>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:8px;">
-              <a href="https://www.linkedin.com/in/baxtiyor-pardaboyev/" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">LinkedIn</a>
-              <a href="https://t.me/PardaboyevBaxtiyor" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">Telegram</a>
+              <a href="https://www.linkedin.com/in/shaxlo-j%C3%B5rayeva-b5b7b6286?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">LinkedIn</a>
+              <a href="https://t.me/otabekovna_10" target="_blank" class="btn" style="padding:8px 16px;font-size:0.8rem;">Telegram</a>
             </div>
           </div>
 
@@ -1233,7 +1272,7 @@
 
         <div style="margin-top:50px;text-align:center;">
           <p style="color:var(--text-muted); margin-bottom:10px;">Loyiha bo'yicha rasmiy email:</p>
-          <a href="mailto:goyibnazarovasliddin@gmail.com" class="btn">goyibnazarovasliddin@gmail.com</a>
+          <a href="mailto:goyibnazarovasliddin@gmail.com" class="btn">info@ecoreport.uz</a>
         </div>
 
       </section>
@@ -1243,7 +1282,7 @@
     </div>
 
     <footer>
-      <p>&copy; 2025 EcoReport - AI500 Stage 1 Demo.</p>
+      <p>&copy; 2026 EcoReport - UzTech Hackaton Stage 1 Demo.</p>
     </footer>
   </div>
 
@@ -1450,9 +1489,24 @@
     const startBtn = document.getElementById('startBtn');
     const sections = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.nav-link');
+    const orbA = document.querySelector('.cursor-orb.orb-a');
+    const orbB = document.querySelector('.cursor-orb.orb-b');
+    const splashSeenKey = 'ecoReportSplashSeen';
+
+    function showAppDirectly() {
+      splash.classList.add('hidden');
+      loader.classList.add('hidden');
+      app.classList.remove('hidden');
+      checkScroll();
+    }
+
+    if (localStorage.getItem(splashSeenKey) === '1') {
+      showAppDirectly();
+    }
 
     // Splash -> Loader -> App Flow
     startBtn.addEventListener('click', () => {
+      localStorage.setItem(splashSeenKey, '1');
       splash.style.opacity = '0';
       setTimeout(() => {
         splash.classList.add('hidden');
@@ -1515,6 +1569,39 @@
         card.style.setProperty('--mouse-y', `${y}px`);
       });
     });
+
+    // Cursor-following blurred orbs
+    if (orbA && orbB) {
+      let targetX = window.innerWidth / 2;
+      let targetY = window.innerHeight / 2;
+      let currentAX = targetX;
+      let currentAY = targetY;
+      let currentBX = targetX;
+      let currentBY = targetY;
+
+      window.addEventListener('mousemove', (event) => {
+        targetX = event.clientX;
+        targetY = event.clientY;
+      });
+
+      function animateOrbs() {
+        currentAX += (targetX - currentAX) * 0.08;
+        currentAY += (targetY - currentAY) * 0.08;
+
+        const inverseX = window.innerWidth - targetX;
+        const inverseY = window.innerHeight - targetY;
+
+        currentBX += (inverseX - currentBX) * 0.06;
+        currentBY += (inverseY - currentBY) * 0.06;
+
+        orbA.style.transform = `translate3d(${currentAX - 210}px, ${currentAY - 210}px, 0)`;
+        orbB.style.transform = `translate3d(${currentBX - 260}px, ${currentBY - 260}px, 0)`;
+
+        requestAnimationFrame(animateOrbs);
+      }
+
+      animateOrbs();
+    }
   </script>
 
   <script>
