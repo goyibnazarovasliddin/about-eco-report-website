@@ -316,6 +316,10 @@
       transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
+    #contact {
+      padding-bottom: 48px;
+    }
+
     section.visible {
       opacity: 1;
       transform: translateY(0);
@@ -351,6 +355,19 @@
       gap: 32px;
       margin-top: 48px;
       /* width: 100%; */
+    }
+
+    @media (min-width: 769px) {
+      #problem .card-grid,
+      #why-us .card-grid,
+      #team .card-grid,
+      #contact .card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #tech .card-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
     }
 
     .card {
@@ -462,7 +479,7 @@
       padding: 60px 20px;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
       color: var(--text-muted);
-      margin-top: 60px;
+      margin-top: 20px;
     }
 
     /* Responsive Mobile Optimization */
@@ -513,25 +530,7 @@
         display: flex;
       }
 
-    .menu-backdrop {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      z-index: 998;
-      opacity: 0;
-      transition: opacity 300ms ease;
-    }
-
-    .menu-backdrop.active {
-      display: block;
-      opacity: 1;
-    }
+      .nav-link {
         font-size: 0.9rem;
         border-radius: 8px;
         transition: all 300ms ease;
@@ -590,10 +589,31 @@
         min-height: auto;
       }
 
+      .btn {
         padding: 14px 28px;
         width: 100%;
         text-align: center;
       }
+    }
+
+    .menu-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 998;
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+
+    .menu-backdrop.active {
+      display: block;
+      opacity: 1;
     }
 
     .flow-carousel .slides {
@@ -935,7 +955,7 @@
 
             <!-- Slides inner -->
             <div class="slides"
-              style="display:flex;gap:18px;transition:transform: 400ms cubic-bezier(.2,.9,.3,1);will-change:transform;">
+              style="display:flex;gap:18px;transition:transform 400ms cubic-bezier(.2,.9,.3,1);will-change:transform;">
               <!-- USER MODE SLIDES (index 0..6) -->
               <div class="slide" data-mode="user" style="flex:0 0 100%;">
                 <div class="card" style="padding:26px;">
