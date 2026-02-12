@@ -239,6 +239,46 @@
       gap: 4px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
       max-width: 90vw;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-toggle {
+      display: none;
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 20px;
+      padding: 0;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 1001;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 2px;
+      transition: all 300ms ease;
+    }
+
+    .nav-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translateY(10px);
+    }
+
+    .nav-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translateY(-10px);
     }
 
     .nav-link {
@@ -428,27 +468,61 @@
     /* Responsive Mobile Optimization */
     @media(max-width:768px) {
 
-      /* Navigation: Bottom Bar */
+      /* Navigation: Hamburger Menu */
       nav {
-        top: auto;
-        bottom: 20px;
-        width: 92%;
-        max-width: 400px;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        width: auto;
+        max-width: none;
+        transform: none;
+        border-radius: 14px;
+        padding: 12px 16px;
+        gap: 8px;
         justify-content: space-between;
-        padding: 12px 20px;
-        overflow-x: auto;
-        scrollbar-width: none;
-        /* Firefox */
+        align-items: center;
+        flex-direction: row;
+        flex-wrap: nowrap;
       }
 
-      nav::-webkit-scrollbar {
+      .nav-toggle {
+        display: flex;
+      }
+
+      .nav-links-container {
         display: none;
-        /* Chrome/Safari */
+        position: absolute;
+        top: 70px;
+        left: 20px;
+        right: 20px;
+        background: rgba(5, 20, 15, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 14px;
+        padding: 12px 8px;
+        flex-direction: column;
+        gap: 4px;
+        z-index: 999;
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+      }
+
+      .nav-links-container.active {
+        display: flex;
       }
 
       .nav-link {
-        padding: 8px 12px;
-        font-size: 0.85rem;
+        padding: 10px 16px;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        transition: all 300ms ease;
+        display: block;
+        text-align: left;
+      }
+
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
       }
 
       /* Typography & Spacing */
@@ -688,14 +762,21 @@
   <div id="app" class="hidden">
 
     <nav>
-      <a href="#hero" class="nav-link active">Asosiy</a>
-      <a href="#problem" class="nav-link">Muammo</a>
-      <a href="#solution" class="nav-link">Yechim</a>
-      <a href="#why-us" class="nav-link">Nega Biz?</a>
-      <a href="#tech" class="nav-link">Texnologiya</a>
-      <a href="#roadmap" class="nav-link">Reja</a>
-      <a href="#team" class="nav-link">Jamoa</a>
-      <a href="#contact" class="nav-link">Aloqa</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Navigation menu toggle" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="nav-links-container" id="navLinksContainer">
+        <a href="#hero" class="nav-link active">Asosiy</a>
+        <a href="#problem" class="nav-link">Muammo</a>
+        <a href="#solution" class="nav-link">Yechim</a>
+        <a href="#why-us" class="nav-link">Nega Biz?</a>
+        <a href="#tech" class="nav-link">Texnologiya</a>
+        <a href="#roadmap" class="nav-link">Reja</a>
+        <a href="#team" class="nav-link">Jamoa</a>
+        <a href="#contact" class="nav-link">Aloqa</a>
+      </div>
     </nav>
 
     <div class="container">
@@ -1601,6 +1682,38 @@
       }
 
       animateOrbs();
+    }
+
+    // Navigation toggle for mobile
+    const navToggle = document.getElementById('navToggle');
+    const navLinksContainer = document.getElementById('navLinksContainer');
+    const navMenuLinks = navLinksContainer.querySelectorAll('.nav-link');
+
+    if (navToggle && navLinksContainer) {
+      navToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = navToggle.classList.toggle('active');
+        navLinksContainer.classList.toggle('active');
+        navToggle.setAttribute('aria-expanded', isOpen);
+      });
+
+      // Close menu when a link is clicked
+      navMenuLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          navToggle.classList.remove('active');
+          navLinksContainer.classList.remove('active');
+          navToggle.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!navToggle.contains(e.target) && !navLinksContainer.contains(e.target)) {
+          navToggle.classList.remove('active');
+          navLinksContainer.classList.remove('active');
+          navToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
     }
   </script>
 
