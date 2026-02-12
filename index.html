@@ -231,16 +231,16 @@
       background: rgba(8, 24, 19, 0.6);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      padding: 8px;
+      padding: 12px 10px;
       border-radius: 100px;
       border: 1px solid rgba(255, 255, 255, 0.16);
       z-index: 1000;
       display: flex;
-      gap: 4px;
+      gap: 0px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
-      max-width: 90vw;
-      flex-wrap: wrap;
-      justify-content: center;
+      width: auto;
+      flex-wrap: nowrap;
+      align-items: center;
     }
 
     .nav-toggle {
@@ -251,7 +251,6 @@
       border: none;
       cursor: pointer;
       color: var(--text-muted);
-      font-size: 20px;
       padding: 0;
       align-items: center;
       justify-content: center;
@@ -285,11 +284,12 @@
       color: var(--text-muted);
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.95rem;
-      padding: 10px 20px;
+      font-size: 0.9rem;
+      padding: 10px 14px;
       border-radius: 100px;
       transition: all 0.3s ease;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     /* Hover & Active State */
@@ -495,10 +495,10 @@
         top: 70px;
         left: 20px;
         right: 20px;
-        background: rgba(5, 20, 15, 0.95);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(5, 20, 15, 0.75);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(104, 210, 148, 0.2);
         border-radius: 14px;
         padding: 12px 8px;
         flex-direction: column;
@@ -506,14 +506,32 @@
         z-index: 999;
         max-height: calc(100vh - 120px);
         overflow-y: auto;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
       }
 
       .nav-links-container.active {
         display: flex;
       }
 
-      .nav-link {
-        padding: 10px 16px;
+    .menu-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 998;
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+
+    .menu-backdrop.active {
+      display: block;
+      opacity: 1;
+    }
         font-size: 0.9rem;
         border-radius: 8px;
         transition: all 300ms ease;
@@ -555,7 +573,23 @@
         padding: 24px;
       }
 
-      .btn {
+      .flow-carousel {
+        background: none !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+      }
+
+      .flow-carousel .slides {
+        gap: 20px;
+      }
+
+      .slide {
+        flex: 0 0 100%;
+        width: 100%;
+        padding: 0;
+        min-height: auto;
+      }
+
         padding: 14px 28px;
         width: 100%;
         text-align: center;
@@ -608,7 +642,7 @@
       }
 
       .slide {
-        padding: 8px
+        padding: 0;
       }
     }
 
@@ -761,6 +795,7 @@
   <!-- Main Content -->
   <div id="app" class="hidden">
 
+    <div class="menu-backdrop" id="menuBackdrop"></div>
     <nav>
       <button class="nav-toggle" id="navToggle" aria-label="Navigation menu toggle" aria-expanded="false">
         <span></span>
@@ -903,13 +938,11 @@
               style="display:flex;gap:18px;transition:transform: 400ms cubic-bezier(.2,.9,.3,1);will-change:transform;">
               <!-- USER MODE SLIDES (index 0..6) -->
               <div class="slide" data-mode="user" style="flex:0 0 100%;">
-                <div class="card-grid" style="grid-template-columns:1fr;align-items:center;gap:14px;">
-                  <div class="card" style="padding:26px;">
-                    <h3>1. Rasmga olish</h3>
-                    <p>Foydalanuvchi muammoni telefon kamerasida suratga oladi. </br>
-                      Ilova rasmni avtomatik tekshiradi va u uchun aniq tavsif yozib beradi</p>
-                    <div class="sub" style="margin-top:10px">User app · Kamera</div>
-                  </div>
+                <div class="card" style="padding:26px;">
+                  <h3>1. Rasmga olish</h3>
+                  <p>Foydalanuvchi muammoni telefon kamerasida suratga oladi. </br>
+                    Ilova rasmni avtomatik tekshiradi va u uchun aniq tavsif yozib beradi</p>
+                  <div class="sub" style="margin-top:10px">User app · Kamera</div>
                 </div>
               </div>
 
@@ -1690,10 +1723,12 @@
     const navMenuLinks = navLinksContainer.querySelectorAll('.nav-link');
 
     if (navToggle && navLinksContainer) {
+      const menuBackdrop = document.getElementById('menuBackdrop');
       navToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         const isOpen = navToggle.classList.toggle('active');
         navLinksContainer.classList.toggle('active');
+        if (menuBackdrop) menuBackdrop.classList.toggle('active');
         navToggle.setAttribute('aria-expanded', isOpen);
       });
 
@@ -1702,6 +1737,7 @@
         link.addEventListener('click', () => {
           navToggle.classList.remove('active');
           navLinksContainer.classList.remove('active');
+          menuBackdrop.classList.remove('active');
           navToggle.setAttribute('aria-expanded', 'false');
         });
       });
@@ -1711,6 +1747,7 @@
         if (!navToggle.contains(e.target) && !navLinksContainer.contains(e.target)) {
           navToggle.classList.remove('active');
           navLinksContainer.classList.remove('active');
+          menuBackdrop.classList.remove('active');
           navToggle.setAttribute('aria-expanded', 'false');
         }
       });
